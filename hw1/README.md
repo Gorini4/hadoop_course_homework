@@ -54,6 +54,29 @@ part-0000.csv
 
 ## Подсказки
 
-* Файлы конфигурации Hadoop можно найти внутри контейнера namenode в папке `/etc/hadoop`.
-* Спикок докер-контейнеров можно получить командой `docker ps` .
-* Возникающие вопросы стоит задавать в канале Slack вашей группы.
+* Файлы конфигурации Hadoop можно найти внутри контейнера namenode в папке `/etc/hadoop`. Эти файлы нужно поместить в папку resources вашего проекта. И тогда при создании клиента они найдутся автоматически.
+* Для взаимодействия с HDFS из Scala следует использовать [FileSystem API](https://hadoop.apache.org/docs/stable/api/org/apache/hadoop/fs/FileSystem.html)
+* Для подключения этого API в ваш проект понадобится Hadoop Client:
+
+``` scala
+"org.apache.hadoop" % "hadoop-client" % "3.2.1"
+```
+
+* Для начала работы необходимо создать файловую систему
+
+``` scala
+import org.apache.hadoop.conf._
+import org.apache.hadoop.fs._
+import java.net.URI
+
+val conf = new Configuration()
+val fileSystem = FileSystem.get(new URI("hdfs://localhost:9000"), conf)
+
+val path = new Path(filename)
+fileSystem.open(path)
+```
+
+* В качестве примера можно использовать этот [репозиторий](https://github.com/ExNexu/hdfs-scala-example/blob/master/src/main/scala/HDFSFileService.scala)
+* Спикок докер-контейнеров можно получить командой `docker ps`
+* Попасть внутрь докер-контейнера можно командой `docker exec -it <container_name>`
+* Любые возникающие вопросы можно обсудить в канале Slack вашей группы
